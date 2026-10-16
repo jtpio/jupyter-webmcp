@@ -11,7 +11,7 @@
         "ai",
         "agents"
     ],
-    "homepage": "https://github.com/jtpio/jupyter-webmcp",
+    "homepage": "https://jupyter-webmcp.readthedocs.io",
     "bugs": {
         "url": "https://github.com/jtpio/jupyter-webmcp/issues"
     },
