@@ -56,7 +56,7 @@ uv pip install notebook
 jupyter notebook
 ```
 
-jupyterlite-pyodide-kernel installs a labextension that fails to load in JupyterLab and logs errors, so keep the JupyterLite packages out of the development environment. The [demo](demo/README.md) folder builds a JupyterLite site with the extension in an environment of its own, with [uv](https://docs.astral.sh/uv/):
+jupyterlite-pyodide-kernel installs a labextension that fails to load in JupyterLab and logs errors, so keep the JupyterLite packages out of the development environment. The [demo](https://github.com/jtpio/jupyter-webmcp/tree/main/demo) folder builds a JupyterLite site with the extension in an environment of its own, with [uv](https://docs.astral.sh/uv/):
 
 ```bash
 cd demo
@@ -95,12 +95,21 @@ jlpm test
 This extension uses [Playwright](https://playwright.dev/docs/intro) for the integration tests (aka user level tests).
 More precisely, the JupyterLab helper [Galata](https://github.com/jupyterlab/jupyterlab/tree/main/galata) is used to handle testing the extension in JupyterLab.
 
-More information is provided within the [ui-tests](./ui-tests/README.md) README.
+More information is provided within the [ui-tests](https://github.com/jtpio/jupyter-webmcp/tree/main/ui-tests) README.
 
 ### Linting
 
 ```sh
 jlpm lint:check  # or jlpm lint to fix the problems
+```
+
+## Documentation
+
+The documentation is built with [MyST](https://mystmd.org) from the pages listed in `myst.yml`, and published on [Read the Docs](https://jupyter-webmcp.readthedocs.io/en/latest/). It needs only Node.js:
+
+```bash
+npm run docs        # preview the documentation
+npm run docs:build  # build the HTML in _build/html
 ```
 
 ## Packaging the extension

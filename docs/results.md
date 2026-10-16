@@ -7,7 +7,7 @@ Every tool returns a JSON object. Tools do not throw for expected errors, becaus
 | Result                                                   | When                                                                                                                                                                            |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{success: true, ...}`                                   | A command result that has a boolean `success`, such as the results of jupyterlab-ai-commands. It is returned as is                                                              |
-| `{success: true, result}`                                | Any other command result. Widgets, also nested ones, are described as in [`get_context`](tools.md#get_context). A value that JSON cannot hold becomes a string                  |
+| `{success: true, result}`                                | Any other command result. Widgets, also nested ones, are described as in [`get_context`](tools.md#built-in-tools). A value that JSON cannot hold becomes a string               |
 | `{success: false, error, isError: true}`                 | An unknown, blocked or failed command, an invalid input, an error in the code. When a command gives no `error`, it is made from `errorName: errorValue`, or else from `message` |
 | `{status: "pending", pendingId, tool, message, dialog?}` | A dialog opened during the call, or the call runs longer than `executionTimeout`. It has no `success` field                                                                     |
 

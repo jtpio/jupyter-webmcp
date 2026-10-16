@@ -85,8 +85,8 @@ coverage.xml
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
+# MyST documentation
+_build/
 
 # PyBuilder
 target/

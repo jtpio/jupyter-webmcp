@@ -1,10 +1,32 @@
 # Clients
 
-Agents outside the browser reach the WebMCP tools of a page through a browser bridge. Each section gives the version of the client that was checked with the [tested versions](../README.md#requirements) of Chrome and Jupyter.
+The WebMCP tools of a page are called from the browser that shows the page, or by an agent outside the browser, through a browser bridge. Each section gives the version of the client that was checked with the [tested versions](../README.md#requirements) of Chrome and Jupyter.
 
 Chrome exposes `document.modelContext` only when WebMCP is enabled: with `chrome://flags/#enable-webmcp-testing`, or with `--enable-features=WebMCP` on the command line. A browser that a bridge starts needs the command-line flag.
 
 The tools register when the Jupyter page has opened its documents, a few seconds after the page loads. A client that lists the tools right after a navigation can get an empty list: list them again. A page that has no document to show stays blank and has no tools, for example `/edit/` without a path in Jupyter Notebook, or `notebooks/index.html` without `?path=` in JupyterLite.
+
+## ChatGPT desktop app
+
+Checked with the ChatGPT desktop app 26.1013 for macOS, on the [JupyterLite demo](https://jtpio.github.io/jupyter-webmcp/lab/index.html?path=demo.ipynb).
+
+The built-in browser of the app has WebMCP enabled, without a flag. Open the Jupyter page in a tab of this browser, then ask ChatGPT to use the tools of the page. ChatGPT calls them [site tools](https://learn.chatgpt.com/docs/webmcp), and the icon in the address bar lists them. Site tools are available in ChatGPT Work and Codex, with some models and plans only.
+
+## Chrome DevTools
+
+Checked with Chrome 155. On the Jupyter page, open DevTools, then **Application → WebMCP**. The panel lists the tools of the page, runs a tool with the parameters that you type, and logs the calls with their input and output.
+
+The Console can call the tools too. A call returns the result as a JSON string:
+
+```js
+const tools = await document.modelContext.getTools();
+const tool = tools.find(tool => tool.name === 'get_context');
+JSON.parse(await document.modelContext.executeTool(tool, {}));
+```
+
+## Model Context Tool Inspector
+
+Checked with version 1.9.19. The [Model Context Tool Inspector](https://chromewebstore.google.com/detail/webmcp-model-context-tool/gbpdfapgefenggkahomfgkhfehlcenpd) extension for Chrome lists the tools of the page in a side panel, and runs a tool with the JSON arguments that you type. It also has an agent that calls the tools with Gemini and your Gemini API key. This agent does not ask you before a call, also for the tools that run code or delete cells: try it on the JupyterLite demo or on a test notebook.
 
 ## Playwright MCP
 
@@ -82,7 +104,7 @@ await browser.close();
 
 ## Example client
 
-[`examples/webmcp-cli.mjs`](../examples/webmcp-cli.mjs) is a small client (Node 22 or later, no dependencies) that uses the CDP `WebMCP` domain of a running Chrome:
+[`examples/webmcp-cli.mjs`](https://github.com/jtpio/jupyter-webmcp/blob/main/examples/webmcp-cli.mjs) is a small client (Node 22 or later, no dependencies) that uses the CDP `WebMCP` domain of a running Chrome:
 
 ```bash
 node examples/webmcp-cli.mjs --cdp http://127.0.0.1:9222 open "http://localhost:8888/lab?token=…"

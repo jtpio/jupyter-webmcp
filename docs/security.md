@@ -6,7 +6,7 @@ The settings of this extension are guardrails for agents that use its tools. The
 
 - **The bridge is the boundary.** Any process that can reach the Chrome debugging port controls the whole browser: it can run JavaScript in the page, read cookies, and bypass every setting of this extension. Use a dedicated browser profile, never your main one.
 - **Keep the agent on the WebMCP tools.** Browser MCP servers have their own tools to run scripts and send input to the page, and these tools can do anything that the extension refuses. Remove them from chrome-devtools-mcp with its [lockdown flags](clients.md#chrome-devtools-mcp). Playwright MCP cannot remove them: deny them in the permissions of the agent.
-- **Approvals.** With Playwright MCP, each page tool is a separate MCP tool, so the agent permissions can allow `webmcp_read_notebook` and ask before `webmcp_run_code`. With chrome-devtools-mcp, all calls go through `execute_webmcp_tool`.
+- **Approvals.** With Playwright MCP, each page tool is a separate MCP tool, so the agent permissions can allow `webmcp_read_notebook` and ask before `webmcp_run_code`. With chrome-devtools-mcp, all calls go through `execute_webmcp_tool`. The agent of the [Model Context Tool Inspector](clients.md#model-context-tool-inspector) calls every tool without approval.
 - **Scope.** Only the agents of the browser that shows the page can call its tools. A Jupyter page in a cross-origin iframe needs `allow="tools"` to register tools.
 
 ## The tools

@@ -1,0 +1,15 @@
+# Read the Docs configuration, see https://docs.readthedocs.com/platform/stable/config-file/v2.html
+version: 2
+
+build:
+  os: ubuntu-24.04
+  tools:
+    nodejs: "24"
+  jobs:
+    build:
+      html:
+        # The URL of the site on Read the Docs, for the links between the pages
+        - BASE_URL="/$READTHEDOCS_LANGUAGE/$READTHEDOCS_VERSION" npm run docs:build
+        # Moved, Read the Docs fails the builds leaving files in its old output directory, _build/html
+        - mkdir -p $READTHEDOCS_OUTPUT
+        - mv _build/html $READTHEDOCS_OUTPUT/html

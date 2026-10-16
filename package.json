@@ -45,6 +45,8 @@
         "clean:lintcache": "rimraf .eslintcache .stylelintcache",
         "clean:labextension": "rimraf jupyter_webmcp/labextension jupyter_webmcp/_version.py",
         "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
+        "docs": "npx --yes mystmd@1.11.0 start",
+        "docs:build": "npx --yes mystmd@1.11.0 build --html --strict",
         "eslint": "jlpm eslint:check --fix",
         "eslint:check": "eslint . --cache",
         "install:extension": "jlpm build",

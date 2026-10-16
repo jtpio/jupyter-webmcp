@@ -1,0 +1,32 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  title: jupyter-webmcp
+  description: Expose Jupyter commands to browser agents as WebMCP tools
+  keywords: [jupyter, jupyterlab, jupyterlite, notebook, webmcp, mcp, agents]
+  license: BSD-3-Clause
+  github: jtpio/jupyter-webmcp
+  error_rules:
+    # GitHub shows the MyST labels of explicit references as text
+    - rule: reference-target-explicit
+      severity: ignore
+    - rule: reference-target-resolves
+      severity: error
+  toc:
+    - file: README.md
+    - file: docs/clients.md
+    - file: docs/tools.md
+    - file: docs/results.md
+    - file: docs/settings.md
+    - file: docs/security.md
+    - file: docs/frontends.md
+    - file: docs/api.md
+    - title: Development
+      children:
+        - file: CONTRIBUTING.md
+        - file: RELEASE.md
+          title: Release
+site:
+  template: book-theme
+  options:
+    logo_text: jupyter-webmcp

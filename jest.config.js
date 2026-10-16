@@ -25,7 +25,7 @@ module.exports = {
     '!src/**/.ipynb_checkpoints/*'
   ],
   coverageReporters: ['lcov', 'text'],
-  modulePathIgnorePatterns: ['<rootDir>/jupyter_webmcp/'],
+  modulePathIgnorePatterns: ['<rootDir>/jupyter_webmcp/', '<rootDir>/_build/'],
   testRegex: 'src/.*/.*.spec.ts[x]?$',
   transformIgnorePatterns: [`/node_modules/(?!${esModules}).+`]
 };
