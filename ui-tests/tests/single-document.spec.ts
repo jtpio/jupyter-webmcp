@@ -219,6 +219,29 @@ test('the notebook page should edit and run the notebook', async ({
   });
 });
 
+test('a call right after the tools register should use the document of the page', async ({
+  page,
+  request
+}) => {
+  const app = frontend();
+  const path = await app.createNotebook(request);
+  await page.goto(app.notebook(path));
+  await waitForTools(page, ALL_TOOLS, 60000);
+
+  // A call before the page opens its document would open a second one.
+  const added = await runTool(page, 'add_cell', {
+    notebookPath: path,
+    content: 'print(6 * 7)'
+  });
+  const run = await runTool(page, 'run_cell', {
+    notebookPath: path,
+    cellId: added.cellId
+  });
+  expect(streamText(run)).toBe('42\n');
+  const context = await callTool(page, 'get_context');
+  expect(context.widgets).toMatchObject([{ type: 'NotebookPanel', path }]);
+});
+
 test('interrupt_kernel should tell whether the kernel stopped', async ({
   page,
   request
