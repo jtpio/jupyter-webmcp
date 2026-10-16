@@ -14,7 +14,7 @@ agent ──MCP──> browser bridge ──CDP──> Jupyter page in Chrome
                 chrome-devtools-mcp)
 ```
 
-<!-- screencast -->
+![The ChatGPT desktop app uses the WebMCP tools of the JupyterLite demo to create and run a notebook](screenshot.png)
 
 ## Try it
 
