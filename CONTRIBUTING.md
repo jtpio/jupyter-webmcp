@@ -56,14 +56,16 @@ uv pip install notebook
 jupyter notebook
 ```
 
-jupyterlite-pyodide-kernel installs a labextension that fails to load in JupyterLab and logs errors, so keep the JupyterLite packages out of the development environment. `ui-tests/build_lite.sh` builds a JupyterLite site with the extension in an environment of its own (it needs [uv](https://docs.astral.sh/uv/)):
+jupyterlite-pyodide-kernel installs a labextension that fails to load in JupyterLab and logs errors, so keep the JupyterLite packages out of the development environment. The [demo](demo/README.md) folder builds a JupyterLite site with the extension in an environment of its own, with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-bash ui-tests/build_lite.sh
-python ui-tests/serve_lite.py 8000
+cd demo
+uv sync
+uv run jupyter lite build
+uv run jupyter lite serve
 ```
 
-Then open `http://127.0.0.1:8000/lab/index.html`. Run `build_lite.sh` again after `jlpm build`.
+Then open `http://127.0.0.1:8000/lab/index.html`. Run `uv run jupyter lite build` again after `jlpm build`.
 
 ## Development uninstall
 

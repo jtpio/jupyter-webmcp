@@ -1,6 +1,7 @@
 # jupyter-webmcp
 
 [![Github Actions Status](https://github.com/jtpio/jupyter-webmcp/workflows/Build/badge.svg)](https://github.com/jtpio/jupyter-webmcp/actions/workflows/build.yml)
+[![lite-badge](https://jupyterlite.rtfd.io/en/latest/_static/badge.svg)](https://jtpio.github.io/jupyter-webmcp/lab/index.html?path=demo.ipynb)
 
 Expose Jupyter commands to browser agents as [WebMCP](https://webmachinelearning.github.io/webmcp/) tools.
 
@@ -13,6 +14,14 @@ agent ──MCP──> browser bridge ──CDP──> Jupyter page in Chrome
 ```
 
 <!-- screencast -->
+
+## Try it
+
+Try the extension in your browser with JupyterLite, without installing anything:
+
+[![lite-badge](https://jupyterlite.rtfd.io/en/latest/_static/badge.svg)](https://jtpio.github.io/jupyter-webmcp/lab/index.html?path=demo.ipynb)
+
+Enable WebMCP in Chrome first (see the [requirements](#requirements)). The demo notebook explains how to connect an agent. The same site also serves the [Jupyter Notebook interface](https://jtpio.github.io/jupyter-webmcp/notebooks/index.html?path=demo.ipynb). The site is deployed to GitHub Pages from the [demo](./demo) folder.
 
 ## Requirements
 

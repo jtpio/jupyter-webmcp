@@ -15,7 +15,9 @@ jupyter_webmcp/_version.py
 ui-tests/test-results/
 ui-tests/playwright-report/
 ui-tests/lite/_output/
-ui-tests/lite/.jupyterlite.doit.db
+
+# JupyterLite
+.jupyterlite.doit.db
 
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
