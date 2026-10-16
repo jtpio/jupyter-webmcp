@@ -5,8 +5,8 @@
 import {
   type APIRequestContext,
   type Page,
-  expect,
-  test
+  test as base,
+  expect
 } from '@playwright/test';
 import {
   ALL_TOOLS,
@@ -49,6 +49,10 @@ interface IFrontend {
    * Create a notebook for a test and return its path.
    */
   createNotebook: (request: APIRequestContext) => Promise<string>;
+  /**
+   * Delete the notebook of a test and stop its kernels.
+   */
+  deleteNotebook: (request: APIRequestContext, path: string) => Promise<void>;
 }
 
 const FRONTENDS: Record<string, IFrontend> = {
@@ -65,6 +69,14 @@ const FRONTENDS: Record<string, IFrontend> = {
       });
       expect(response.ok()).toBe(true);
       return path;
+    },
+    deleteNotebook: async (request, path) => {
+      const response = await request.get('/api/sessions');
+      const sessions: { id: string; path: string }[] = await response.json();
+      for (const session of sessions.filter(item => item.path === path)) {
+        await request.delete(`/api/sessions/${session.id}`);
+      }
+      await request.delete(`/api/contents/${path}`);
     }
   },
   jupyterlite: {
@@ -75,9 +87,23 @@ const FRONTENDS: Record<string, IFrontend> = {
     // Pyodide kernels do not support interrupts.
     interrupts: false,
     // Each test has a new browser storage with the contents of the site.
-    createNotebook: async () => 'webmcp.ipynb'
+    createNotebook: async () => 'webmcp.ipynb',
+    // The kernels stop with the page.
+    deleteNotebook: async () => undefined
   }
 };
+
+/**
+ * The tests get a notebook of their own, deleted with its kernels at the end.
+ */
+const test = base.extend<{ notebookPath: string }>({
+  notebookPath: async ({ request }, use) => {
+    const app = frontend();
+    const path = await app.createNotebook(request);
+    await use(path);
+    await app.deleteNotebook(request, path);
+  }
+});
 
 /**
  * The app of the project of the test.
@@ -101,10 +127,9 @@ async function openNotebook(page: Page, path: string): Promise<ToolResult> {
 
 test('the file browser page should describe itself', async ({
   page,
-  request
+  notebookPath: path
 }) => {
   const app = frontend();
-  const path = await app.createNotebook(request);
   await page.goto(app.tree);
   await waitForTools(page, ALL_TOOLS, 60000);
 
@@ -129,10 +154,9 @@ test('the file browser page should describe itself', async ({
 
 test('open_document should open the document in a new browser tab', async ({
   page,
-  request
+  notebookPath: path
 }) => {
   const app = frontend();
-  const path = await app.createNotebook(request);
   await page.goto(app.tree);
   await waitForTools(page, ALL_TOOLS, 60000);
 
@@ -153,10 +177,9 @@ test('open_document should open the document in a new browser tab', async ({
 
 test('the notebook page should edit and run the notebook', async ({
   page,
-  request
+  notebookPath: path
 }) => {
   const app = frontend();
-  const path = await app.createNotebook(request);
   const context = await openNotebook(page, path);
   expect(context).toMatchObject({
     success: true,
@@ -221,10 +244,9 @@ test('the notebook page should edit and run the notebook', async ({
 
 test('a call right after the tools register should use the document of the page', async ({
   page,
-  request
+  notebookPath: path
 }) => {
   const app = frontend();
-  const path = await app.createNotebook(request);
   await page.goto(app.notebook(path));
   await waitForTools(page, ALL_TOOLS, 60000);
 
@@ -244,10 +266,9 @@ test('a call right after the tools register should use the document of the page'
 
 test('interrupt_kernel should tell whether the kernel stopped', async ({
   page,
-  request
+  notebookPath: path
 }) => {
   const app = frontend();
-  const path = await app.createNotebook(request);
   const context = await openNotebook(page, path);
   const kernelId: string = context.widgets[0].kernel.id;
   const added = await runTool(page, 'add_cell', {
