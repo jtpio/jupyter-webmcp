@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+  # The packages of the JupyterLite demo
+  - package-ecosystem: uv
+    directory: /demo
+    schedule:
+      interval: weekly
+    groups:
+      demo:
+        patterns: ['*']

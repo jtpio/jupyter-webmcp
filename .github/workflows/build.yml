@@ -5,6 +5,10 @@ on:
     branches: main
   pull_request:
     branches: '*'
+  schedule:
+    # Every Monday, to find the WebMCP changes of new Chrome releases
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -87,12 +91,19 @@ jobs:
         python -m jupyterlab.browser_check --no-browser-test
 
   integration-tests:
-    name: Integration tests
+    name: Integration tests (${{ matrix.browser }})
     needs: build
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        # Chrome stable and beta only run on schedule and on demand
+        browser: ${{ fromJSON((github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '["chromium", "chrome", "chrome-beta"]' || '["chromium"]') }}
+
     env:
       PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
+      WEBMCP_TEST_CHANNEL: ${{ matrix.browser != 'chromium' && matrix.browser || '' }}
 
     steps:
     - name: Checkout
@@ -130,7 +141,12 @@ jobs:
     - name: Install browser
       run: |
         set -eux
-        jlpm playwright install chromium --only-shell
+        if [ -z "$WEBMCP_TEST_CHANNEL" ]; then
+          jlpm playwright install chromium --only-shell
+        else
+          # The runner image can have an older Chrome stable
+          jlpm playwright install --force "$WEBMCP_TEST_CHANNEL"
+        fi
       working-directory: ui-tests
 
     - name: Build the JupyterLite site
@@ -150,7 +166,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: jupyter_webmcp-playwright-tests
+        name: jupyter_webmcp-playwright-tests-${{ matrix.browser }}
         path: |
           ui-tests/test-results
           ui-tests/playwright-report

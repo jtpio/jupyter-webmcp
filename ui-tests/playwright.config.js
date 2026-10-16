@@ -31,6 +31,7 @@ module.exports = {
   testDir: './tests',
   use: {
     ...baseConfig.use,
+    channel: process.env.WEBMCP_TEST_CHANNEL || undefined,
     launchOptions: {
       /**
        * WebMCP is behind a feature flag. Playwright passes its own

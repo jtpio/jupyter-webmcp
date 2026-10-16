@@ -16,6 +16,9 @@ JupyterLab. Each app is a Playwright project with its own server:
   `--enable-features` would replace the one of Playwright), plus
   `--use-mock-keychain --password-store=basic` for the keychain of macOS and
   Linux.
+- The tests use the Chromium of Playwright. Set `WEBMCP_TEST_CHANNEL` to use an
+  installed Chrome, for example `chrome` or `chrome-beta`. CI tests Chrome
+  stable and beta every week, to find the WebMCP changes of new releases.
 - Playwright starts the servers on `WEBMCP_TEST_PORT` (default `18880`) and
   the next two ports, and fails if a port is in use. Set
   `WEBMCP_REUSE_SERVER=1` to use servers that already run.
