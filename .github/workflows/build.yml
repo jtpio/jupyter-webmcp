@@ -11,8 +11,9 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  # The pushes do not cancel the weekly run
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -181,3 +182,28 @@ jobs:
       - uses: jupyterlab/maintainer-tools/.github/actions/check-links@v1
         with:
           ignore_links: "https://jtpio.github.io/jupyter-webmcp/.*"
+
+  report_failure:
+    name: Report the failure of the weekly run
+    needs: [build, test_isolated, integration-tests, check_links]
+    if: failure() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open an issue, or comment on the open one
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -eux
+          title="The weekly run of the Build workflow failed"
+          number=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open \
+            --search "\"$title\" in:title" --json number --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --repo "$GITHUB_REPOSITORY" \
+              --body "The weekly run failed again: $RUN_URL"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --label maintenance \
+              --body "The weekly run tests Chrome stable and beta, and the links. See the failed jobs of $RUN_URL."
+          fi
