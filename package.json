@@ -1,6 +1,6 @@
 {
     "name": "jupyter-webmcp",
-    "version": "0.1.0",
+    "version": "0.0.0",
     "description": "Expose Jupyter commands to AI agents as WebMCP tools",
     "keywords": [
         "jupyter",
