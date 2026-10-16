@@ -4,7 +4,7 @@ Agents outside the browser reach the WebMCP tools of a page through a browser br
 
 Chrome exposes `document.modelContext` only when WebMCP is enabled: with `chrome://flags/#enable-webmcp-testing`, or with `--enable-features=WebMCP` on the command line. A browser that a bridge starts needs the command-line flag.
 
-The tools register when the Jupyter page has opened its documents, a few seconds after the page loads. A client that lists the tools right after a navigation can get an empty list: list them again.
+The tools register when the Jupyter page has opened its documents, a few seconds after the page loads. A client that lists the tools right after a navigation can get an empty list: list them again. A Jupyter Notebook or JupyterLite page that has no document to show, such as a notebook page without a path, stays blank and has no tools.
 
 ## Playwright MCP
 
