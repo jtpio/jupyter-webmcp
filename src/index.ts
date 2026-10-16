@@ -80,7 +80,7 @@ const plugin: JupyterFrontEndPlugin<IWebMCPRegistry> = {
       return registry;
     }
 
-    Promise.all([app.started, settingRegistry.load(PLUGIN_ID)])
+    Promise.all([app.restored, settingRegistry.load(PLUGIN_ID)])
       .then(
         ([, settings]) => manager.start(settings),
         reason => {
