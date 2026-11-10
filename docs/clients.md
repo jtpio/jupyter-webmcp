@@ -123,7 +123,8 @@ echo '{"path": ""}' | node examples/webmcp-cli.mjs call list_directory -
 The CDP `WebMCP` domain has these parts:
 
 - `WebMCP.enable` sends `WebMCP.toolsAdded` for the tools that are already registered, then for new ones. `WebMCP.toolsRemoved` reports removed tools.
-- `WebMCP.invokeTool {frameId, toolName, input}` returns an `invocationId`. The result comes in the `WebMCP.toolResponded` event, with `status` (`Completed`, `Error` or `Canceled`) and `output`. A fast tool can respond before `invokeTool` returns, so listen for the event first.
+- `WebMCP.invokeTool {frameId, toolId, input}` returns an `invocationId`. The result comes in the `WebMCP.toolResponded` event, with `status` (`Completed`, `Error` or `Canceled`) and `output`. A fast tool can respond before `invokeTool` returns, so listen for the event first.
+- Chrome 159 adds the `toolId` of each tool to `WebMCP.toolsAdded` and `WebMCP.toolsRemoved`. A tool that is registered again gets a new `toolId`. Earlier versions take `toolName` in place of `toolId`, and Chrome 159 deprecates it. The example client uses `toolId` when the browser gives one.
 - `WebMCP.cancelInvocation {invocationId}` cancels a call.
 
 ## Electron
