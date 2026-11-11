@@ -65,6 +65,7 @@ export default plugin;
 Tools registered this way get no input checks, no bounding and no pending results, and `disabledTools` and `blockedCommands` do not apply to them. So:
 
 - return errors as data, for example `{success: false, error, isError: true}`, instead of throwing (see [results](results.md));
+- give an `outputSchema` only when all the results match it, also the errors: agents can refuse a result that does not match. Chrome 159 and later report the `outputSchema` to agents, and earlier versions ignore it;
 - use names of at most 64 letters, digits and `_`: some MCP clients cut longer names or change other characters, such as `-` and `.`;
 - do not use the names of the built-in and default tools: when your tool takes one first, the tool of this extension is not registered.
 

@@ -54,6 +54,11 @@ export interface IModelContextTool {
    */
   inputSchema?: Record<string, unknown>;
   /**
+   * JSON schema of the result. Browsers do not validate the result, but
+   * agents may reject one that does not match.
+   */
+  outputSchema?: Record<string, unknown>;
+  /**
    * Behavioral hints.
    */
   annotations?: IToolAnnotations;

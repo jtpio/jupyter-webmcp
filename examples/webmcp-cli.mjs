@@ -19,7 +19,7 @@ Options:
   --page <text>          Use the first page whose URL contains <text>
                          (default: the first Jupyter page, such as /lab,
                          /notebooks/... or /tree)
-  --schemas              With list: print the input schemas
+  --schemas              With list: print the input and output schemas
   --timeout <seconds>    Maximum time to wait for a tool result (default 120)
   -h, --help             Show this help
 
@@ -299,12 +299,13 @@ async function listCommand(connection, options) {
     const flags = hints(tool.annotations);
     console.log(`${tool.name}${flags.length ? ` [${flags.join(', ')}]` : ''}`);
     console.log(`  ${tool.description}`);
-    if (options.schemas && tool.inputSchema) {
-      const schema =
-        typeof tool.inputSchema === 'string'
-          ? JSON.parse(tool.inputSchema)
-          : tool.inputSchema;
-      console.log(`  input: ${JSON.stringify(schema)}`);
+    for (const key of options.schemas ? ['input', 'output'] : []) {
+      const schema = tool[`${key}Schema`];
+      if (schema) {
+        console.log(
+          `  ${key}: ${JSON.stringify(typeof schema === 'string' ? JSON.parse(schema) : schema)}`
+        );
+      }
     }
   }
   console.log(`\n${tools.length} tools`);
@@ -352,9 +353,10 @@ async function callCommand(connection, options, name, input) {
       responses.set(params.invocationId, params);
     }
   });
+  // Chrome 159 adds toolId and deprecates toolName.
   const { invocationId } = await connection.send('WebMCP.invokeTool', {
     frameId: tool.frameId,
-    toolName: name,
+    ...(tool.toolId ? { toolId: tool.toolId } : { toolName: name }),
     input
   });
   const cancel = async reason => {
