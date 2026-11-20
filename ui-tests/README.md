@@ -8,6 +8,7 @@ JupyterLab. Each app is a Playwright project with its own server:
 | Project       | App                                 | Tests                                                                         |
 | ------------- | ----------------------------------- | ----------------------------------------------------------------------------- |
 | `jupyterlab`  | JupyterLab                          | `tests/jupyterlab/`                                                           |
+| `polyfill`    | JupyterLab, without WebMCP          | `tests/polyfill.spec.ts`                                                      |
 | `notebook`    | Jupyter Notebook 7                  | `tests/single-document.spec.ts`                                               |
 | `jupyterlite` | JupyterLite with the Pyodide kernel | `tests/single-document.spec.ts` (notebooks UI), `tests/jupyterlite/` (lab UI) |
 
@@ -15,7 +16,9 @@ JupyterLab. Each app is a Playwright project with its own server:
   passes `--enable-features=WebMCP,CDPScreenshotNewSurface` (a second
   `--enable-features` would replace the one of Playwright), plus
   `--use-mock-keychain --password-store=basic` for the keychain of macOS and
-  Linux.
+  Linux. The `polyfill` project does not pass the feature flag: the extension
+  installs the WebMCP polyfill, and the tests call the tools with
+  `document.modelContext` in the page.
 - The tests use the Chromium of Playwright. Set `WEBMCP_TEST_CHANNEL` to use an
   installed Chrome, for example `chrome` or `chrome-beta`. CI tests Chrome
   stable and beta every week, to find the WebMCP changes of new releases.

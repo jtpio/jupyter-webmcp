@@ -10,18 +10,29 @@ export class WebMCPRegistry implements IWebMCPRegistry {
   /**
    * Construct a new registry.
    *
-   * @param modelContext - The browser `ModelContext`, or `null` when WebMCP
-   * is not available.
+   * @param modelContext - The `ModelContext` of the document, or `null`
+   * when WebMCP is not available.
+   * @param isPolyfilled - Whether a polyfill provides `modelContext`.
    */
-  constructor(modelContext: IModelContext | null) {
+  constructor(modelContext: IModelContext | null, isPolyfilled = false) {
     this._context = modelContext;
+    this._isPolyfilled = isPolyfilled && modelContext !== null;
   }
 
   /**
-   * Whether the browser exposes the WebMCP API for this page.
+   * Whether the page has the WebMCP API, from the browser or from a
+   * polyfill.
    */
   get isAvailable(): boolean {
     return this._context !== null;
+  }
+
+  /**
+   * Whether a polyfill provides the WebMCP API: only the agents that run in
+   * the page can then call the tools.
+   */
+  get isPolyfilled(): boolean {
+    return this._isPolyfilled;
   }
 
   /**
@@ -44,7 +55,7 @@ export class WebMCPRegistry implements IWebMCPRegistry {
   async registerTool(tool: IModelContextTool): Promise<IDisposable> {
     if (!this._context) {
       throw new Error(
-        'WebMCP is not available: the browser does not expose document.modelContext.'
+        'WebMCP is not available: the page has no document.modelContext.'
       );
     }
     const { name } = tool;
@@ -69,6 +80,7 @@ export class WebMCPRegistry implements IWebMCPRegistry {
   }
 
   private _context: IModelContext | null;
+  private _isPolyfilled: boolean;
   private _tools = new Set<string>();
   private _registering = new Set<string>();
   private _changed = new Signal<IWebMCPRegistry, void>(this);

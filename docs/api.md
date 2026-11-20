@@ -9,13 +9,15 @@ To register a tool directly, use the `IWebMCPRegistry` token.
 ```ts
 interface IWebMCPRegistry {
   readonly isAvailable: boolean;
+  readonly isPolyfilled: boolean;
   readonly toolNames: readonly string[];
   readonly changed: ISignal<IWebMCPRegistry, void>;
   registerTool(tool: IModelContextTool): Promise<IDisposable>;
 }
 ```
 
-- `isAvailable`: whether the browser exposes WebMCP (`document.modelContext`) for this page.
+- `isAvailable`: whether the page has WebMCP (`document.modelContext`), from the browser or from the [polyfill](clients.md#polyfill).
+- `isPolyfilled`: whether the polyfill provides WebMCP. Only the agents that run in the page can then call the tools.
 - `toolNames`: the names of the tools registered through the registry, sorted. They include the tools of this extension.
 - `changed`: emitted when a tool is registered or removed.
 - `registerTool(tool)`: registers a WebMCP tool. It rejects when WebMCP is not available, when the name is taken, or when the browser refuses the tool. Dispose the result to remove the tool.
