@@ -86,8 +86,8 @@ export interface IModelContext {
 }
 
 /**
- * The `ModelContext` of the document, or `null` when the browser does not
- * support WebMCP or the feature is not enabled.
+ * The `ModelContext` of the document, from the browser or from a polyfill,
+ * or `null` when the page has none.
  */
 export function getModelContext(): IModelContext | null {
   const doc = document as unknown as { modelContext?: IModelContext };

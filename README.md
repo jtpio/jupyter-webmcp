@@ -36,9 +36,9 @@ The same site also serves the [Jupyter Notebook interface](https://jtpio.github.
 - A browser with WebMCP enabled, for example Chrome 155 or later: turn on `chrome://flags/#enable-webmcp-testing`, or start Chrome with `--enable-features=WebMCP`. The built-in browser of the ChatGPT desktop app has WebMCP enabled for the plans and models that have [site tools](docs/clients.md#chatgpt-desktop-app)
 - Jupyter served from a secure context: `localhost`, `127.0.0.1` or HTTPS
 
-Without WebMCP, the extension registers no tool, and the status bar shows `WebMCP: unavailable`.
+In a browser without WebMCP, the extension installs the [WebMCP polyfill](https://github.com/w3c-oss/webmcp-polyfill), and the status bar shows `WebMCP: 21 tools (polyfill)`. The agents that run in the page can then call the tools. The browser bridges and the other clients outside the page cannot: see [Polyfill](docs/clients.md#polyfill). Outside a secure context, the extension registers no tool, and the status bar shows `WebMCP: unavailable`.
 
-The extension and these docs were tested with Chrome 155, JupyterLab 4.6.4, Jupyter Notebook 7.6.3, JupyterLite 0.8.6 with the Pyodide kernel 0.8.6, and jupyterlab-ai-commands 0.4.0.
+The extension and these docs were tested with Chrome 155, JupyterLab 4.6.4, Jupyter Notebook 7.6.3, JupyterLite 0.8.6 with the Pyodide kernel 0.8.6, jupyterlab-ai-commands 0.4.0, and @w3c/webmcp-polyfill 0.1.1.
 
 ## Install
 
@@ -91,7 +91,7 @@ npx chrome-devtools-mcp@latest --isolated --categoryExperimentalWebmcp \
 
 The agent calls the page tools through `list_webmcp_tools` and `execute_webmcp_tool`. The `--no-category*` and `--javascriptEvaluation=false` flags remove the tools that run scripts or send input to the page, so that the agent goes through the WebMCP tools.
 
-More clients (the ChatGPT desktop app, Chrome DevTools, a Chrome extension, the Playwright library for scripts and tests, a running Chrome, a small CDP client, Electron): [Clients](docs/clients.md).
+More clients (the ChatGPT desktop app, Chrome DevTools, a Chrome extension, the polyfill for agents in the page, the Playwright library for scripts and tests, a running Chrome, a small CDP client, Electron): [Clients](docs/clients.md).
 
 ## Tools
 

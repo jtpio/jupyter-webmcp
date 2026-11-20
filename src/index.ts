@@ -12,9 +12,15 @@ import { CommandIDs, LOG_PREFIX, PLUGIN_ID } from './commands';
 import { KernelCommands } from './kernels';
 import { ToolManager } from './manager';
 import { getModelContext } from './modelcontext';
+import { IWebMCPPolyfill, installPolyfill } from './polyfill';
 import { WebMCPRegistry } from './registry';
 import { IWebMCPRegistry } from './tokens';
-import { ToolList, WebMCPStatus, unavailableHint } from './widgets';
+import {
+  ToolList,
+  WebMCPStatus,
+  polyfillHint,
+  unavailableHint
+} from './widgets';
 
 export * from './modelcontext';
 export * from './tokens';
@@ -26,6 +32,20 @@ export type { ICommandToolSpec } from './specs';
 const DOMAIN = 'jupyter_webmcp';
 
 /**
+ * The plugin installing the WebMCP polyfill. Disable it to register the
+ * tools only in browsers that have WebMCP.
+ */
+const polyfill: JupyterFrontEndPlugin<IWebMCPPolyfill> = {
+  id: 'jupyter-webmcp:polyfill',
+  description: 'Installs a WebMCP polyfill when the browser has no WebMCP.',
+  autoStart: true,
+  provides: IWebMCPPolyfill,
+  activate: async (): Promise<IWebMCPPolyfill> => ({
+    isInstalled: await installPolyfill()
+  })
+};
+
+/**
  * The main plugin, exposing commands as WebMCP tools.
  */
 const plugin: JupyterFrontEndPlugin<IWebMCPRegistry> = {
@@ -35,18 +55,28 @@ const plugin: JupyterFrontEndPlugin<IWebMCPRegistry> = {
   autoStart: true,
   provides: IWebMCPRegistry,
   requires: [ISettingRegistry],
-  optional: [ICommandPalette, ITranslator, IDefaultFileBrowser, ILabShell],
+  optional: [
+    ICommandPalette,
+    ITranslator,
+    IDefaultFileBrowser,
+    ILabShell,
+    IWebMCPPolyfill
+  ],
   activate: (
     app: JupyterFrontEnd,
     settingRegistry: ISettingRegistry,
     palette: ICommandPalette | null,
     translator: ITranslator | null,
     fileBrowser: IDefaultFileBrowser | null,
-    labShell: ILabShell | null
+    labShell: ILabShell | null,
+    webmcpPolyfill: IWebMCPPolyfill | null
   ): IWebMCPRegistry => {
     const trans = (translator ?? nullTranslator).load(DOMAIN);
     const modelContext = getModelContext();
-    const registry = new WebMCPRegistry(modelContext);
+    const registry = new WebMCPRegistry(
+      modelContext,
+      webmcpPolyfill?.isInstalled
+    );
     const manager = new ToolManager({
       app,
       registry,
@@ -78,6 +108,11 @@ const plugin: JupyterFrontEndPlugin<IWebMCPRegistry> = {
         `${LOG_PREFIX} ${unavailableHint(nullTranslator.load(DOMAIN))}`
       );
       return registry;
+    }
+    if (registry.isPolyfilled) {
+      console.debug(
+        `${LOG_PREFIX} ${polyfillHint(nullTranslator.load(DOMAIN))}`
+      );
     }
 
     Promise.all([app.restored, settingRegistry.load(PLUGIN_ID)])
@@ -127,4 +162,4 @@ const status: JupyterFrontEndPlugin<void> = {
   }
 };
 
-export default [plugin, status];
+export default [polyfill, plugin, status];

@@ -8,6 +8,7 @@ The settings of this extension are guardrails for agents that use its tools. The
 - **Keep the agent on the WebMCP tools.** Browser MCP servers have their own tools to run scripts and send input to the page, and these tools can do anything that the extension refuses. Remove them from chrome-devtools-mcp with its [lockdown flags](clients.md#chrome-devtools-mcp). Playwright MCP cannot remove them: deny them in the permissions of the agent.
 - **Approvals.** With Playwright MCP, each page tool is a separate MCP tool, so the agent permissions can allow `webmcp_read_notebook` and ask before `webmcp_run_code`. With chrome-devtools-mcp, all calls go through `execute_webmcp_tool`. The agent of the [Model Context Tool Inspector](clients.md#model-context-tool-inspector) calls every tool without approval.
 - **Scope.** Only the agents of the browser that shows the page can call its tools. A Jupyter page in a cross-origin iframe needs `allow="tools"` to register tools.
+- **Polyfill.** In a browser without WebMCP, the [polyfill](clients.md#polyfill) gives the tools to the scripts of the page, and to the frames of the same origin that load the polyfill. These scripts already have full access to the page. To register tools only with the WebMCP of the browser, disable the `jupyter-webmcp:polyfill` plugin.
 
 ## The tools
 

@@ -30,6 +30,24 @@ describe('WebMCPRegistry', () => {
     });
   });
 
+  describe('#isPolyfilled', () => {
+    it('is false by default', () => {
+      expect(new WebMCPRegistry(new FakeModelContext()).isPolyfilled).toBe(
+        false
+      );
+    });
+
+    it('is true when a polyfill provides the model context', () => {
+      const registry = new WebMCPRegistry(new FakeModelContext(), true);
+      expect(registry.isAvailable).toBe(true);
+      expect(registry.isPolyfilled).toBe(true);
+    });
+
+    it('is false without a model context', () => {
+      expect(new WebMCPRegistry(null, true).isPolyfilled).toBe(false);
+    });
+  });
+
   describe('#registerTool()', () => {
     it('registers tools with the model context', async () => {
       const context = new FakeModelContext();

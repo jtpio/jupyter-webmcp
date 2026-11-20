@@ -7,12 +7,16 @@ import { ToolList, WebMCPStatus } from '../widgets';
 import { FakeModelContext, tool, trans } from './utils';
 
 const HINT =
-  'WebMCP is not available in this browser. Enable it in Chrome with chrome://flags/#enable-webmcp-testing (or --enable-features=WebMCP), and open Jupyter from localhost or HTTPS.';
+  'WebMCP is not available on this page. Open Jupyter from localhost or HTTPS. Without the polyfill, also enable WebMCP in Chrome with chrome://flags/#enable-webmcp-testing (or --enable-features=WebMCP).';
+
+const POLYFILL_HINT =
+  'This browser has no WebMCP: a polyfill provides it, and only the agents that run in the page can call the tools. For the other agents, enable WebMCP in Chrome with chrome://flags/#enable-webmcp-testing (or --enable-features=WebMCP).';
 
 describe('WebMCPStatus', () => {
-  function setup(available = true) {
+  function setup(available = true, polyfilled = false) {
     const registry = new WebMCPRegistry(
-      available ? new FakeModelContext() : null
+      available ? new FakeModelContext() : null,
+      polyfilled
     );
     const commands = new CommandRegistry();
     const execute = jest.fn();
@@ -36,6 +40,16 @@ describe('WebMCPStatus', () => {
     );
     registration.dispose();
     expect(item.node.textContent).toBe('WebMCP: 0 tools');
+    item.dispose();
+  });
+
+  it('shows when a polyfill provides WebMCP', async () => {
+    const { item, registry } = setup(true, true);
+    expect(item.node.textContent).toBe('WebMCP: 0 tools (polyfill)');
+    expect(item.hasClass('jp-mod-unavailable')).toBe(false);
+    await registry.registerTool(tool('a'));
+    expect(item.node.textContent).toBe('WebMCP: 1 tool (polyfill)');
+    expect(item.node.title).toBe(POLYFILL_HINT);
     item.dispose();
   });
 
@@ -91,6 +105,20 @@ describe('ToolList', () => {
     expect(
       list.node.querySelector('.jp-WebMCPToolList-warning')?.textContent
     ).toBe('A warning.');
+    list.dispose();
+  });
+
+  it('tells that a polyfill provides WebMCP', async () => {
+    const registry = new WebMCPRegistry(new FakeModelContext(), true);
+    await registry.registerTool(tool('get_context'));
+    const list = new ToolList({ registry, manager: manager({}), trans });
+    expect(
+      Array.from(list.node.children).map(node => node.textContent)
+    ).toEqual([
+      POLYFILL_HINT,
+      'The agents that run in this page can call these tools:',
+      'get_context'
+    ]);
     list.dispose();
   });
 

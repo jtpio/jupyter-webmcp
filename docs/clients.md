@@ -2,7 +2,7 @@
 
 The WebMCP tools of a page are called from the browser that shows the page, or by an agent outside the browser, through a browser bridge. Each section gives the version of the client that was checked with the [tested versions](../README.md#requirements) of Chrome and Jupyter.
 
-Chrome exposes `document.modelContext` only when WebMCP is enabled: with `chrome://flags/#enable-webmcp-testing`, or with `--enable-features=WebMCP` on the command line. A browser that a bridge starts needs the command-line flag.
+Chrome exposes `document.modelContext` only when WebMCP is enabled: with `chrome://flags/#enable-webmcp-testing`, or with `--enable-features=WebMCP` on the command line. A browser that a bridge starts needs the command-line flag. In a browser without WebMCP, the [polyfill](#polyfill) gives the tools to the agents that run in the page, and to no other client.
 
 The tools register when the Jupyter page has opened its documents, a few seconds after the page loads. A client that lists the tools right after a navigation can get an empty list: list them again. A page that has no document to show stays blank and has no tools, for example `/edit/` without a path in Jupyter Notebook, or `notebooks/index.html` without `?path=` in JupyterLite.
 
@@ -23,6 +23,19 @@ const tools = await document.modelContext.getTools();
 const tool = tools.find(tool => tool.name === 'get_context');
 JSON.parse(await document.modelContext.executeTool(tool, {}));
 ```
+
+## Polyfill
+
+Checked with `@w3c/webmcp-polyfill` 0.1.1, in a Chromium without the WebMCP feature.
+
+The [WebMCP polyfill](https://github.com/w3c-oss/webmcp-polyfill) implements `document.modelContext` in JavaScript. The extension installs it when the browser has no WebMCP, and the status bar then shows `WebMCP: 21 tools (polyfill)`. In a browser with WebMCP, the extension does not load the polyfill.
+
+With the polyfill, only scripts that run in the page can list and call the tools, with the same calls as in the [Console](#chrome-devtools). Such a script can be an agent of another Jupyter extension, or a script that a browser extension adds to the page (in the main world).
+
+- The browser does not know the tools of the polyfill. The clients outside the page do not see them: the bridges, the CDP `WebMCP` domain, the WebMCP panel of DevTools and the agents of the browser. For these clients, enable WebMCP in the browser.
+- The polyfill needs a secure context, as the WebMCP of the browser does.
+- A call that fails rejects with a `DOMException` such as `OperationError`, without the error of the tool. The tools of this extension return their errors as [data](results.md).
+- To register tools only with the WebMCP of the browser, disable the plugin: `jupyter labextension disable jupyter-webmcp:polyfill`.
 
 ## Model Context Tool Inspector
 

@@ -9,9 +9,16 @@ import { IModelContextTool } from './modelcontext';
  */
 export interface IWebMCPRegistry {
   /**
-   * Whether the browser exposes the WebMCP API for this page.
+   * Whether the page has the WebMCP API, from the browser or from a
+   * polyfill.
    */
   readonly isAvailable: boolean;
+
+  /**
+   * Whether a polyfill provides the WebMCP API: only the agents that run in
+   * the page can then call the tools.
+   */
+  readonly isPolyfilled: boolean;
 
   /**
    * Names of the tools registered through this registry.

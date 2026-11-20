@@ -26,6 +26,11 @@ const withLite =
   !!process.env.CI ||
   fs.existsSync(path.join(__dirname, 'lite', '_output', 'index.html'));
 
+/**
+ * These flags keep Chromium away from the keychain of macOS and Linux.
+ */
+const keychainArgs = ['--use-mock-keychain', '--password-store=basic'];
+
 module.exports = {
   ...baseConfig,
   testDir: './tests',
@@ -35,13 +40,11 @@ module.exports = {
     launchOptions: {
       /**
        * WebMCP is behind a feature flag. Playwright passes its own
-       * --enable-features, which a second flag would replace. The other
-       * flags keep Chromium away from the keychain of macOS and Linux.
+       * --enable-features, which a second flag would replace.
        */
       args: [
         '--enable-features=WebMCP,CDPScreenshotNewSurface',
-        '--use-mock-keychain',
-        '--password-store=basic'
+        ...keychainArgs
       ]
     }
   },
@@ -52,6 +55,15 @@ module.exports = {
       // Some tests start kernels.
       timeout: 120 * 1000,
       use: { baseURL: url(0) }
+    },
+    {
+      name: 'polyfill',
+      testMatch: 'polyfill.spec.ts',
+      use: {
+        baseURL: url(0),
+        // Without the feature flag, the extension installs the polyfill.
+        launchOptions: { args: keychainArgs }
+      }
     },
     {
       name: 'notebook',

@@ -4191,6 +4191,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@w3c/webmcp-polyfill@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@w3c/webmcp-polyfill@npm:0.1.1"
+  dependencies:
+    webmcp-types: ^0.1.11
+  checksum: 825b2594f8289709713d69713d77fd201250e168ede4d7832cab1261eeaee02a8d4f8b47ae9f05f698eadcd2c582c19797fe2f4330989f8f37e8be0447b93148
+  languageName: node
+  linkType: hard
+
 "abab@npm:^2.0.6":
   version: 2.0.6
   resolution: "abab@npm:2.0.6"
@@ -7652,6 +7661,7 @@ __metadata:
     "@types/json-schema": ^7.0.11
     "@types/react": ^18.0.26
     "@types/react-addons-linked-state-mixin": ^0.14.22
+    "@w3c/webmcp-polyfill": ^0.1.1
     eslint: ^9.0.0
     eslint-config-prettier: ^9.0.0
     eslint-plugin-prettier: ^5.0.0
@@ -10094,6 +10104,13 @@ __metadata:
   version: 7.0.0
   resolution: "webidl-conversions@npm:7.0.0"
   checksum: f05588567a2a76428515333eff87200fae6c83c3948a7482ebb109562971e77ef6dc49749afa58abb993391227c5697b3ecca52018793e0cb4620a48f10bd21b
+  languageName: node
+  linkType: hard
+
+"webmcp-types@npm:^0.1.11":
+  version: 0.1.11
+  resolution: "webmcp-types@npm:0.1.11"
+  checksum: d793f59115b8b66fafe02f007a6c910fa308c5463d8c89e47e7842e4d6956a61c1a7938f98d6a4be5ec03700a4bd306a54068f6b00def2b9e453b70139aa316d
   languageName: node
   linkType: hard
 

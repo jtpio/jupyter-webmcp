@@ -11,7 +11,16 @@ import { IWebMCPRegistry } from './tokens';
  */
 export function unavailableHint(trans: TranslationBundle): string {
   return trans.__(
-    'WebMCP is not available in this browser. Enable it in Chrome with chrome://flags/#enable-webmcp-testing (or --enable-features=WebMCP), and open Jupyter from localhost or HTTPS.'
+    'WebMCP is not available on this page. Open Jupyter from localhost or HTTPS. Without the polyfill, also enable WebMCP in Chrome with chrome://flags/#enable-webmcp-testing (or --enable-features=WebMCP).'
+  );
+}
+
+/**
+ * Explanation shown when a polyfill provides WebMCP.
+ */
+export function polyfillHint(trans: TranslationBundle): string {
+  return trans.__(
+    'This browser has no WebMCP: a polyfill provides it, and only the agents that run in the page can call the tools. For the other agents, enable WebMCP in Chrome with chrome://flags/#enable-webmcp-testing (or --enable-features=WebMCP).'
   );
 }
 
@@ -83,6 +92,15 @@ export class WebMCPStatus extends Widget {
       return;
     }
     const count = this._registry.toolNames.length;
+    if (this._registry.isPolyfilled) {
+      this._text.textContent = trans._n(
+        'WebMCP: %1 tool (polyfill)',
+        'WebMCP: %1 tools (polyfill)',
+        count
+      );
+      this.node.title = polyfillHint(trans);
+      return;
+    }
     this._text.textContent = trans._n(
       'WebMCP: %1 tool',
       'WebMCP: %1 tools',
@@ -139,6 +157,9 @@ export class ToolList extends Widget {
       this._paragraph(unavailableHint(trans));
       return;
     }
+    if (registry.isPolyfilled) {
+      this._paragraph(polyfillHint(trans));
+    }
     if (manager.error) {
       this._paragraph(
         trans.__('No tool is registered: %1', manager.error),
@@ -150,7 +171,9 @@ export class ToolList extends Widget {
       this._paragraph(trans.__('No WebMCP tool is registered yet.'));
     } else {
       this._paragraph(
-        trans.__('Browser agents can call these tools on this page:')
+        registry.isPolyfilled
+          ? trans.__('The agents that run in this page can call these tools:')
+          : trans.__('Browser agents can call these tools on this page:')
       );
       const commands = manager.tools;
       const list = document.createElement('ul');
