@@ -38,7 +38,7 @@ The same site also serves the [Jupyter Notebook interface](https://jtpio.github.
 
 In a browser without WebMCP, the extension installs the [WebMCP polyfill](https://github.com/w3c-oss/webmcp-polyfill), and the status bar shows `WebMCP: 21 tools (polyfill)`. The agents that run in the page can then call the tools. The browser bridges and the other clients outside the page cannot: see [Polyfill](docs/clients.md#polyfill). Outside a secure context, the extension registers no tool, and the status bar shows `WebMCP: unavailable`.
 
-The extension and these docs were tested with Chrome 155, JupyterLab 4.6.4, Jupyter Notebook 7.6.3, JupyterLite 0.8.6 with the Pyodide kernel 0.8.6, jupyterlab-ai-commands 0.4.0, and @w3c/webmcp-polyfill 0.1.1.
+The extension and these docs were tested with Chrome 155, JupyterLab 4.6.4, Jupyter Notebook 7.6.3, JupyterLite 0.8.6 with the Pyodide kernel 0.8.6, jupyterlab-ai-commands 0.4.0, and `@w3c/webmcp-polyfill` 0.1.1.
 
 ## Install
 
